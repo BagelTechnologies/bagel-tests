@@ -1,0 +1,58 @@
+
+> home-test-backend@1.0.0 dev
+> tsx watch src/index.ts
+
+📊 MongoDB connected: mongodb://localhost:27017/hometestdb
+🚀 Server running on http://localhost:4000
+📚 API endpoints available at http://localhost:4000/api
+🏥 Health check: http://localhost:4000/api/health
+2025-09-15T13:07:40.682Z - GET /api/health
+2025-09-15T13:07:40.689Z - GET / - 200 - 7ms
+2025-09-15T13:07:41.696Z - GET /api/tasks/stats
+2025-09-15T13:07:41.699Z - GET /api/tasks
+2025-09-15T13:07:41.706Z - GET /stats - 304 - 10ms
+2025-09-15T13:07:41.710Z - GET / - 304 - 11ms
+4:09:16 PM [tsx] change in ./src/database/index.ts Restarting...
+SIGTERM received, shutting down gracefully
+c📊 MongoDB connected: mongodb://localhost:27017/hometestdb
+🚀 Server running on http://localhost:4000
+📚 API endpoints available at http://localhost:4000/api
+🏥 Health check: http://localhost:4000/api/health
+4:09:51 PM [tsx] change in ./src/database/index.ts Restarting...
+SIGTERM received, shutting down gracefully
+c📊 MongoDB connected: mongodb://localhost:27017/hometestdb
+🚀 Server running on http://localhost:4000
+📚 API endpoints available at http://localhost:4000/api
+🏥 Health check: http://localhost:4000/api/health
+4:09:52 PM [tsx] change in ./src/database/index.ts Restarting...
+SIGTERM received, shutting down gracefully
+c📊 Mong4:09:56 PM [tsx] change in ./src/tasks/services.ts Process hasn't exited. Killing process...
+4:09:56 PM [tsx] change in ./src/database/index.ts Process hasn't exited. Killing process...
+host:4000/api/health
+4:09:56 PM [tsx] change in ./src/tasks/services.ts Restarting...
+SIGTERM received, shutting down gracefully
+c4:09:56 PM [tsx] change in ./src/database/index.ts Restarting...
+c📊 MongoDB connected: mongodb://localhost:27017/hometestdb
+🚀 Server running on http://localhost:4000
+📚 API endpoints available at http://localhost:4000/api
+🏥 Health check: http://localhost:4000/api/health
+2025-09-15T13:10:01.095Z - GET /api/tasks/stats
+2025-09-15T13:10:01.105Z - GET /api/tasks
+2025-09-15T13:10:01.138Z - GET /stats - 304 - 43ms
+2025-09-15T13:10:01.144Z - GET / - 304 - 39ms
+2025-09-15T13:10:02.452Z - GET /api/tasks/stats
+2025-09-15T13:10:02.454Z - GET /api/tasks
+2025-09-15T13:10:02.458Z - GET /stats - 304 - 6ms
+2025-09-15T13:10:02.461Z - GET / - 304 - 7ms
+2025-09-15T13:12:49.069Z - GET /api/tasks/stats
+2025-09-15T13:12:49.071Z - GET /api/tasks
+2025-09-15T13:12:49.074Z - GET /stats - 304 - 5ms
+2025-09-15T13:12:49.076Z - GET / - 304 - 5ms
+ocess hasn't exited. Killing process...
+4:09:56 PM [tsx] change in ./src/tasks/services.ts Process hasn't exited. Killing process...
+4:09:56 PM [tsx] change in ./src/database/index.ts Process hasn't exited. Killing process...
+e in ./src/database/index.ts Process hasn't exited. Killing process...
+4:09:51 PM [tsx] change in ./src/database/index.ts Process hasn't exited. Killing process...
+4:09:52 PM [tsx] change in ./src/database/index.ts Process hasn't exited. Killing process...
+4:09:56 PM [tsx] change in ./src/tasks/services.ts Process hasn't exited. Killing process...
+4:09:56 PM [tsx] change in ./src/database/index.ts Process hasn't exited. Killing process...

@@ -1,0 +1,59 @@
+{
+  "name": "fullstack-home-test",
+  "version": "1.0.0",
+  "description": "Full-Stack Home Test - React + Node.js + MongoDB",
+  "type": "module",
+  "scripts": {
+    "setup": "npm run setup:backend && npm run setup:frontend",
+    "setup:backend": "cd starter/backend && npm install",
+    "setup:frontend": "cd starter/frontend && npm install",
+    "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
+    "dev:backend": "cd starter/backend && npm run dev",
+    "dev:frontend": "cd starter/frontend && npm run dev",
+    "dev:db": "docker run --rm --name mongo-test -p 27017:27017 mongo:7",
+    "build": "npm run build:backend && npm run build:frontend",
+    "build:backend": "cd starter/backend && npm run build",
+    "build:frontend": "cd starter/frontend && npm run build",
+    "start": "npm run start:backend",
+    "start:backend": "cd starter/backend && npm start",
+    "seed": "cd starter/backend && npm run seed",
+    "docker:up": "docker-compose up -d",
+    "docker:down": "docker-compose down",
+    "docker:logs": "docker-compose logs -f",
+    "clean": "npm run clean:backend && npm run clean:frontend && docker-compose down -v",
+    "clean:backend": "cd starter/backend && npm run clean",
+    "clean:frontend": "cd starter/frontend && rm -rf dist",
+    "lint": "npm run lint:backend && npm run lint:frontend",
+    "lint:backend": "cd starter/backend && npm run lint",
+    "lint:frontend": "cd starter/frontend && npm run lint",
+    "test": "npm run test:backend && npm run test:frontend",
+    "test:backend": "cd starter/backend && npm test",
+    "test:frontend": "cd starter/frontend && npm test"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2",
+    "node-fetch": "^2.7.0"
+  },
+  "bin": {
+    "bagel": "./bagel.js"
+  },
+  "keywords": [
+    "fullstack",
+    "react",
+    "nodejs",
+    "mongodb",
+    "typescript",
+    "home-test"
+  ],
+  "author": "meirpertzz",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/your-username/fullstack-home-test.git"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=8.0.0"
+  }
+}
+

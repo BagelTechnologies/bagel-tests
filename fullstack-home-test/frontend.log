@@ -1,0 +1,19 @@
+
+> home-test-frontend@1.0.0 dev
+> vite
+
+
+  VITE v5.4.20  ready in 99 ms
+
+  ➜  Local:   http://localhost:5173/
+  ➜  Network: use --host to expose
+4:08:01 PM [vite] hmr update /src/components/TaskItem.tsx
+4:08:01 PM [vite] hmr update /src/components/TaskForm.tsx
+4:08:02 PM [vite] hmr update /src/components/TaskForm.tsx
+4:08:02 PM [vite] hmr update /src/components/TaskItem.tsx
+4:08:02 PM [vite] hmr update /src/components/TaskItem.tsx
+4:08:02 PM [vite] hmr update /src/components/TaskForm.tsx
+4:08:02 PM [vite] hmr update /src/components/TaskItem.tsx
+4:09:56 PM [vite] hmr update /src/components/TaskForm.tsx
+4:09:56 PM [vite] hmr update /src/components/TaskItem.tsx
+4:09:56 PM [vite] hmr update /src/components/TaskList.tsx, /src/components/TaskStats.tsx, /src/components/TaskForm.tsx, /src/components/TaskItem.tsx
