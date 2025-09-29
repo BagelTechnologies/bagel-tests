@@ -1,24 +1,29 @@
-# 🥯 Task 3 — MongoDB Integration
+# 🥯 Task 3 — Service Layer Implementation
 
-## Welcome to Bagel's Database Challenge!
-The MongoDB integration is already set up - focus on implementing the business logic that uses it.
+## Welcome to Bagel's Business Logic Challenge!
+**Important**: The MongoDB setup is complete! Your job is implementing the service layer business logic.
 
 ## What's Already Done ✅
-- **Schema Design**: Task model with proper validation
-- **Connection Management**: Robust MongoDB connection with fallbacks
-- **Indexing**: Performance indexes already configured
-- **Data Layer**: Complete data access layer in `src/tasks/data.ts`
-- **Docker Setup**: MongoDB container ready to go
+- **✅ MongoDB Schema**: Task model with validation (`src/database/index.ts`)
+- **✅ Database Connection**: Robust MongoDB connection with fallbacks
+- **✅ Data Access Layer**: Complete CRUD operations in `src/tasks/data.ts`
+- **✅ Docker Setup**: MongoDB container ready to go
+- **✅ Indexing**: Performance indexes configured
 
-## Your Focus 🔨
-Since the database layer is complete, your job is to:
-- **Implement Service Layer**: Complete the business logic in `src/tasks/services.ts`
-  - `createTask()` - Add validation and call data layer
-  - `updateTask()` - Validate updates and call data layer  
-  - `deleteTask()` - Handle deletion logic
-  - `getTaskById()` - Retrieve single task (bonus)
-- **Use Existing Data Layer**: The `TaskData` class has all CRUD operations ready
-- **Follow TODO Hints**: Clear step-by-step guidance in the code
+## Your Mission 🔨
+**Focus on Service Layer Logic** - The database is ready, implement the business rules:
+
+### Core Implementation (Required)
+- **🔨 `createTask()`** - Add input validation and business rules
+- **🔨 `updateTask()`** - Validate updates and handle business logic  
+- **🔨 `deleteTask()`** - Implement deletion with proper error handling
+- **🔨 `getTaskById()`** - Single task retrieval (bonus)
+
+### Key Points
+- ✅ **Database Layer**: `TaskData` class has all MongoDB operations ready
+- 🔨 **Your Job**: Add validation, error handling, and business logic
+- 📝 **Follow TODO Hints**: Step-by-step guidance in `src/tasks/services.ts`
+- 🎯 **Focus**: Business logic, not database setup
 
 ### MongoDB Setup Options
 
@@ -297,15 +302,109 @@ taskSchema.query.active = function() {
 - Monitor database performance
 - Set up alerts for connection issues
 
-## Testing Database Layer
+## 🧪 Testing Your Implementation
+
+### Service Layer Testing (Recommended)
+
+Create tests for your service layer implementation:
 
 ```typescript
-// tests/database.test.ts
+// tests/taskService.test.ts
+import { TaskServices } from '../src/tasks/services';
+import { TaskData } from '../src/tasks/data';
+
+// Mock the data layer
+jest.mock('../src/tasks/data');
+const MockTaskData = TaskData as jest.MockedClass<typeof TaskData>;
+
+describe('TaskServices', () => {
+  let taskServices: TaskServices;
+  let mockTaskData: jest.Mocked<TaskData>;
+
+  beforeEach(() => {
+    MockTaskData.mockClear();
+    taskServices = new TaskServices();
+    mockTaskData = MockTaskData.mock.instances[0] as jest.Mocked<TaskData>;
+  });
+
+  describe('createTask', () => {
+    it('should create task with valid title', async () => {
+      // Arrange
+      const input = { title: 'Test task' };
+      const mockTask = {
+        _id: 'mock-id',
+        title: 'Test task',
+        status: 'open',
+        createdAt: new Date(),
+        updatedAt: new Date()
+      };
+      mockTaskData.create.mockResolvedValue(mockTask as any);
+
+      // Act
+      const result = await taskServices.createTask(input);
+
+      // Assert
+      expect(mockTaskData.create).toHaveBeenCalledWith({ title: 'Test task' });
+      expect(result.title).toBe('Test task');
+      expect(result.id).toBe('mock-id');
+    });
+
+    it('should throw error for empty title', async () => {
+      // Arrange
+      const input = { title: '   ' };
+
+      // Act & Assert
+      await expect(taskServices.createTask(input))
+        .rejects.toThrow('Title cannot be empty');
+    });
+  });
+
+  describe('updateTask', () => {
+    it('should update task successfully', async () => {
+      // Arrange
+      const id = 'mock-id';
+      const updates = { status: 'done' as const };
+      const mockUpdatedTask = {
+        _id: id,
+        title: 'Test task',
+        status: 'done',
+        createdAt: new Date(),
+        updatedAt: new Date()
+      };
+      mockTaskData.updateById.mockResolvedValue(mockUpdatedTask as any);
+
+      // Act
+      const result = await taskServices.updateTask(id, updates);
+
+      // Assert
+      expect(mockTaskData.updateById).toHaveBeenCalledWith(id, updates);
+      expect(result.status).toBe('done');
+    });
+
+    it('should throw error when task not found', async () => {
+      // Arrange
+      mockTaskData.updateById.mockResolvedValue(null);
+
+      // Act & Assert
+      await expect(taskServices.updateTask('invalid-id', { status: 'done' }))
+        .rejects.toThrow('Task not found');
+    });
+  });
+});
+```
+
+### Integration Testing (Bonus)
+
+Test the full stack with real MongoDB:
+
+```typescript
+// tests/integration/tasks.test.ts
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import mongoose from 'mongoose';
-import { Task } from '../models/Task';
+import request from 'supertest';
+import { app } from '../src/app';
 
-describe('Task Model', () => {
+describe('Tasks API Integration', () => {
   let mongoServer: MongoMemoryServer;
 
   beforeAll(async () => {
@@ -319,22 +418,69 @@ describe('Task Model', () => {
   });
 
   beforeEach(async () => {
-    await Task.deleteMany({});
+    // Clear database before each test
+    await mongoose.connection.db.dropDatabase();
   });
 
-  it('should create a task with valid data', async () => {
-    const taskData = { title: 'Test task' };
-    const task = new Task(taskData);
-    const savedTask = await task.save();
+  describe('POST /api/tasks', () => {
+    it('should create a new task', async () => {
+      const taskData = { title: 'Integration test task' };
 
-    expect(savedTask.title).toBe(taskData.title);
-    expect(savedTask.status).toBe('open');
-    expect(savedTask.createdAt).toBeDefined();
+      const response = await request(app)
+        .post('/api/tasks')
+        .send(taskData)
+        .expect(201);
+
+      expect(response.body.success).toBe(true);
+      expect(response.body.data.title).toBe(taskData.title);
+      expect(response.body.data.status).toBe('open');
+    });
+
+    it('should validate required fields', async () => {
+      const response = await request(app)
+        .post('/api/tasks')
+        .send({})
+        .expect(400);
+
+      expect(response.body.success).toBe(false);
+      expect(response.body.error).toContain('validation');
+    });
   });
-
-  // More tests...
 });
 ```
+
+### Quick Test Setup
+
+Add to `package.json`:
+```json
+{
+  "devDependencies": {
+    "jest": "^29.0.0",
+    "@types/jest": "^29.0.0",
+    "mongodb-memory-server": "^8.0.0",
+    "supertest": "^6.0.0",
+    "@types/supertest": "^2.0.0"
+  },
+  "scripts": {
+    "test": "jest",
+    "test:watch": "jest --watch"
+  }
+}
+```
+
+### Testing Strategy
+
+1. **Start with Service Layer**: Test business logic in isolation
+2. **Mock Dependencies**: Use mocks for data layer to focus on logic
+3. **Test Edge Cases**: Empty inputs, invalid IDs, not found scenarios
+4. **Integration Tests**: Test the full request/response cycle (bonus)
+
+### What to Test
+
+- ✅ **Input Validation**: Empty titles, invalid data
+- ✅ **Business Logic**: Title trimming, status validation
+- ✅ **Error Handling**: Not found, validation errors
+- ✅ **Success Cases**: Valid operations return expected data
 
 ## Expected Outcome
 A robust database layer that:

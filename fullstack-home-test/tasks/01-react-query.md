@@ -70,12 +70,180 @@ Create custom hooks for:
 - ✨ **Optimistic Updates**: For better perceived performance
 - ✨ **Debounced Search**: If implementing search functionality
 
-## Testing Considerations
-- Test loading states
-- Test error scenarios
-- Test optimistic updates
-- Mock API responses
-- Test cache invalidation
+## 🧪 Testing Your Implementation (Bonus)
+
+### Testing React Query Hooks
+
+```typescript
+// tests/hooks/useTasks.test.tsx
+import { renderHook, waitFor } from '@testing-library/react';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { useCreateTask, useTasks } from '../../src/hooks/useTasks';
+import { taskApi } from '../../src/lib/api';
+
+// Mock the API
+jest.mock('../../src/lib/api');
+const mockTaskApi = taskApi as jest.Mocked<typeof taskApi>;
+
+// Test wrapper with QueryClient
+const createWrapper = () => {
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: { retry: false },
+      mutations: { retry: false },
+    },
+  });
+  
+  return ({ children }: { children: React.ReactNode }) => (
+    <QueryClientProvider client={queryClient}>
+      {children}
+    </QueryClientProvider>
+  );
+};
+
+describe('useTasks', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  it('should fetch tasks successfully', async () => {
+    // Arrange
+    const mockTasks = [
+      { id: '1', title: 'Test task', status: 'open', createdAt: '2023-01-01T00:00:00Z' }
+    ];
+    mockTaskApi.getTasks.mockResolvedValue(mockTasks);
+
+    // Act
+    const { result } = renderHook(() => useTasks(), {
+      wrapper: createWrapper(),
+    });
+
+    // Assert
+    await waitFor(() => {
+      expect(result.current.isSuccess).toBe(true);
+    });
+    expect(result.current.data).toEqual(mockTasks);
+  });
+
+  it('should handle loading state', () => {
+    // Arrange
+    mockTaskApi.getTasks.mockImplementation(() => new Promise(() => {})); // Never resolves
+
+    // Act
+    const { result } = renderHook(() => useTasks(), {
+      wrapper: createWrapper(),
+    });
+
+    // Assert
+    expect(result.current.isLoading).toBe(true);
+    expect(result.current.data).toBeUndefined();
+  });
+});
+
+describe('useCreateTask', () => {
+  it('should create task with optimistic updates', async () => {
+    // Arrange
+    const newTask = { title: 'New task' };
+    const createdTask = { 
+      id: '2', 
+      title: 'New task', 
+      status: 'open', 
+      createdAt: '2023-01-01T00:00:00Z' 
+    };
+    mockTaskApi.createTask.mockResolvedValue(createdTask);
+
+    // Act
+    const { result } = renderHook(() => useCreateTask(), {
+      wrapper: createWrapper(),
+    });
+
+    result.current.mutate(newTask);
+
+    // Assert
+    expect(result.current.isLoading).toBe(true);
+    
+    await waitFor(() => {
+      expect(result.current.isSuccess).toBe(true);
+    });
+    expect(mockTaskApi.createTask).toHaveBeenCalledWith(newTask);
+  });
+});
+```
+
+### Testing Components with React Query
+
+```typescript
+// tests/components/TaskForm.test.tsx
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { TaskForm } from '../../src/components/TaskForm';
+import { taskApi } from '../../src/lib/api';
+
+jest.mock('../../src/lib/api');
+const mockTaskApi = taskApi as jest.Mocked<typeof taskApi>;
+
+const renderWithQuery = (component: React.ReactElement) => {
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: { retry: false },
+      mutations: { retry: false },
+    },
+  });
+
+  return render(
+    <QueryClientProvider client={queryClient}>
+      {component}
+    </QueryClientProvider>
+  );
+};
+
+describe('TaskForm', () => {
+  it('should create task on form submission', async () => {
+    // Arrange
+    const mockTask = { 
+      id: '1', 
+      title: 'Test task', 
+      status: 'open', 
+      createdAt: '2023-01-01T00:00:00Z' 
+    };
+    mockTaskApi.createTask.mockResolvedValue(mockTask);
+
+    renderWithQuery(<TaskForm />);
+
+    // Act
+    const input = screen.getByPlaceholderText(/task title/i);
+    const submitButton = screen.getByRole('button', { name: /add task/i });
+
+    fireEvent.change(input, { target: { value: 'Test task' } });
+    fireEvent.click(submitButton);
+
+    // Assert
+    await waitFor(() => {
+      expect(mockTaskApi.createTask).toHaveBeenCalledWith({ title: 'Test task' });
+    });
+  });
+
+  it('should show validation error for empty title', async () => {
+    renderWithQuery(<TaskForm />);
+
+    // Act
+    const submitButton = screen.getByRole('button', { name: /add task/i });
+    fireEvent.click(submitButton);
+
+    // Assert
+    await waitFor(() => {
+      expect(screen.getByText(/title is required/i)).toBeInTheDocument();
+    });
+  });
+});
+```
+
+### Testing Strategy
+1. **Mock API calls**: Use `jest.mock()` to control API responses
+2. **Test loading states**: Verify UI shows loading indicators
+3. **Test error handling**: Simulate API failures and check error display
+4. **Test optimistic updates**: Verify UI updates immediately before API response
+5. **Test form validation**: Check client-side validation works correctly
 
 ## Expected Outcome
 A responsive task management interface that:

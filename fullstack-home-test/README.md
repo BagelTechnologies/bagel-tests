@@ -150,11 +150,36 @@ npm run dev:frontend
 | **Communication** | Clear commits, good NOTES.md explaining your decisions |
 
 ## 🌟 Bonus Points (If You Have Time)
-- **Testing**: Unit tests for your implementations
+- **Testing**: Unit tests for your implementations (see testing examples in task files)
 - **Polish**: Smooth animations, better UX
 - **Error Boundaries**: React error boundaries
 - **Performance**: Optimizations you think are important
 - **Documentation**: Comments explaining complex logic
+
+## 🧪 Testing Guidance (Bonus)
+
+We encourage test-driven development! Each task includes testing examples:
+
+### Quick Test Setup
+```bash
+# Backend testing
+cd starter/backend
+npm install --save-dev jest @types/jest mongodb-memory-server supertest @types/supertest
+npm run test
+
+# Frontend testing  
+cd starter/frontend
+npm install --save-dev @testing-library/react @testing-library/jest-dom vitest
+npm run test
+```
+
+### What to Test
+- **Service Layer**: Business logic with mocked dependencies
+- **API Endpoints**: Request/response validation
+- **React Hooks**: Custom hooks behavior and error handling
+- **Components**: User interactions and loading states
+
+See detailed testing examples in each task file!
 
 ## 💡 Tips for Success
 - **Start with the backend** - get the API endpoints working first
