@@ -6,7 +6,7 @@ You'll build a small task management feature end-to-end using the same modern te
 - **Backend:** Node.js + TypeScript (Express)  
 - **Database:** MongoDB (containerized with Docker)
 
-**Time allocation: 3–4 hours** (focus on quality over completeness—we'd rather see well-crafted code than rushed features).
+**Time allocation: 2–3 hours** (focus on quality over completeness—we'd rather see well-crafted code than rushed features).
 
 ## 🎯 Your Mission
 Build a task management system that showcases your skills in the areas we care about at Bagel:
